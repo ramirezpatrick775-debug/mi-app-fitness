@@ -1,91 +1,109 @@
-function descargarPlanPDF() {
-    // 1. Validamos que haya datos calculados previamente
-    const kcal = document.getElementById('res-calorias').innerText;
-    if (!kcal || kcal === "0" || kcal === "") {
-        alert("Primero debes calcular tu plan ingresando tus datos.");
+// Base de datos de alimentos integrada
+const baseDeDatosAlimentos = [
+    { nombre: "Arroz blanco cocido", carbohidratosPor100g: 28, caloriasPor100g: 130 },
+    { nombre: "Avena en hojuelas", carbohidratosPor100g: 66, caloriasPor100g: 389 },
+    { nombre: "Papa/Patata hervida", carbohidratosPor100g: 17, caloriasPor100g: 77 },
+    { nombre: "Banana/Plátano", carbohidratosPor100g: 23, caloriasPor100g: 89 },
+    { nombre: "Pechuga de pollo", carbohidratosPor100g: 0, caloriasPor100g: 165 },
+    { nombre: "Huevo entero", carbohidratosPor100g: 0.7, caloriasPor100g: 155 }
+];
+
+function procesarDatos() {
+    const peso = parseFloat(document.getElementById('peso').value);
+    const altura = parseFloat(document.getElementById('altura').value);
+    const edad = parseInt(document.getElementById('edad').value);
+    const sexo = document.getElementById('sexo').value;
+    const objetivo = document.getElementById('objetivo').value;
+    const esPremium = document.getElementById('premium').value === 'si';
+
+    if (!peso || !altura || !edad) {
+        alert("Por favor, completa todos los campos.");
         return;
     }
 
-    const carbos = document.getElementById('res-carbos').innerText;
-    const proteinas = document.getElementById('res-proteinas').innerText;
-    const grasas = document.getElementById('res-grasas').innerText;
-    const comidas = document.getElementById('res-comidas').innerHTML;
-    const rutina = document.getElementById('res-rutina').innerHTML;
+    let geb = 0;
+    if (sexo === 'masculino') {
+        geb = (10 * peso) + (6.25 * altura) - (5 * edad) + 5;
+    } else {
+        geb = (10 * peso) + (6.25 * altura) - (5 * edad) - 161;
+    }
 
-    // 2. Creamos el contenedor temporal, pero lo insertamos invisible temporalmente en el cuerpo del documento
-    // Esto es crucial para que los navegadores móviles permitan procesar los elementos
-    const plantillaPDF = document.createElement('div');
-    plantillaPDF.id = 'temp-pdf-container';
-    plantillaPDF.style.padding = '25px';
-    plantillaPDF.style.fontFamily = 'Arial, sans-serif';
-    plantillaPDF.style.color = '#333333';
-    plantillaPDF.style.backgroundColor = '#ffffff';
-    plantillaPDF.style.position = 'absolute';
-    plantillaPDF.style.left = '-9999px'; // Lo mantiene oculto al usuario de forma segura
-    plantillaPDF.style.width = '700px';  // Ancho fijo estándar para evitar roturas de diseño en pantallas pequeñas de celular
+    let caloriasMantenimiento = geb * 1.4;
+    let caloriasObjetivo = caloriasMantenimiento;
 
-    // Limpiamos posibles botones o interfaces web dentro del bloque para el documento impreso
-    let rutinaLimpia = rutina.replace(/<button[^>]*>([\s\S]*?)<\/button>/gi, '');
-    rutinaLimpia = rutinaLimpia.replace(/id="bloque-premium-web"/gi, 'style="border: 1px solid #f5c6cb; padding: 12px; border-radius: 6px; background-color: #f8d7da; color: #721c24;"');
+    if (objetivo === 'deficit') {
+        caloriasObjetivo -= 400; 
+    } else if (objetivo === 'volumen') {
+        caloriasObjetivo += 400; 
+    }
 
-    plantillaPDF.innerHTML = `
-        <div style="text-align: center; border-bottom: 3px solid #22c55e; padding-bottom: 12px; margin-bottom: 25px;">
-            <h1 style="margin: 0; font-size: 24px; color: #111827;">🏋️‍♂️ MI PLAN FITNESS PRO 🏋️‍♂️</h1>
-            <p style="margin: 6px 0 0 0; color: #22c55e; font-size: 13px; font-weight: bold; letter-spacing: 1px;">Resultados y Disciplina</p>
-        </div>
+    const proteinaGramos = Math.round(peso * 2); 
+    const grasaGramos = Math.round(peso * 1);    
+    const kcalProteina = proteinaGramos * 4;
+    const kcalGrasa = grasaGramos * 9;
+    const kcalRestantes = caloriasObjetivo - (kcalProteina + kcalGrasa);
+    const carbohidratosGramos = Math.max(0, Math.round(kcalRestantes / 4));
 
-        <div style="background-color: #f9fafb; border: 1px solid #e5e7eb; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
-            <h3 style="color: #22c55e; margin-top: 0; margin-bottom: 10px; font-size: 16px; border-bottom: 1px solid #e5e7eb; padding-bottom: 5px;">📊 Macronutrientes Diarios</h3>
-            <p style="margin: 5px 0; font-size: 14px;">• <strong>Calorías Objetivo:</strong> ${kcal} kcal</p>
-            <p style="margin: 5px 0; font-size: 14px;">• <strong>Carbohidratos:</strong> ${carbos}g</p>
-            <p style="margin: 5px 0; font-size: 14px;">• <strong>Proteínas:</strong> ${proteinas}g</p>
-            <p style="margin: 5px 0; font-size: 14px;">• <strong>Grasas:</strong> ${grasas}g</p>
-        </div>
-
-        <h3 style="color: #22c55e; margin-bottom: 8px; margin-top: 25px; font-size: 16px; border-bottom: 1px solid #e5e7eb; padding-bottom: 5px;">🛒 Distribución de Alimentos sugerida</h3>
-        <div style="font-size: 14px; line-height: 1.5;">${comidas}</div>
-
-        <h3 style="color: #22c55e; margin-bottom: 8px; margin-top: 25px; font-size: 16px; border-bottom: 1px solid #e5e7eb; padding-bottom: 5px;">💪 Rutina de Entrenamiento Planificada</h3>
-        <div style="font-size: 14px; line-height: 1.5;">${rutinaLimpia}</div>
-
-        <div style="text-align: center; margin-top: 40px; padding-top: 15px; border-top: 1px solid #e5e7eb; color: #9ca3af; font-size: 11px;">
-            Plan generado de forma personalizada. Prohibida su distribución masiva.
-        </div>
-    `;
-
-    document.body.appendChild(plantillaPDF);
-
-    // 3. Configuración avanzada optimizada para móviles
-    const opciones = {
-        margin:         10,
-        filename:       'Mi_Plan_Fitness.pdf',
-        image:          { type: 'jpeg', quality: 0.95 },
-        html2canvas:    { 
-            scale: 2,             // Balance ideal entre nitidez y rendimiento en celulares
-            useCORS: true,        // Permite procesar estilos externos si los hubiera
-            logging: false,
-            letterRendering: true
-        },
-        jsPDF:          { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    };
-
-    // 4. Ejecución del renderizado y posterior limpieza del DOM
-    html2pdf().set(opciones).from(plantillaPDF).save()
-    .then(() => {
-        // Removemos el contenedor del documento una vez se complete la descarga de forma exitosa
-        const elementoCreado = document.getElementById('temp-pdf-container');
-        if (elementoCreado) {
-            elementoCreado.remove();
-        }
-    })
-    .catch((error) => {
-        console.error("Error generando el PDF:", error);
-        alert("Hubo un percance al generar el archivo en este dispositivo. Inténtalo desde el navegador nativo (Chrome o Safari).");
-        
-        // Limpieza de seguridad en caso de fallo
-        const elementoCreado = document.getElementById('temp-pdf-container');
-        if (elementoCreado) {
-            elementoCreado.remove();
+    let htmlOpcionesComida = "<ul>";
+    baseDeDatosAlimentos.forEach(alimento => {
+        if (alimento.carbohidratosPor100g > 0) {
+            const gramosNecesarios = Math.round((carbohidratosGramos / alimento.carbohidratosPor100g) * 100);
+            htmlOpcionesComida += `<li>Para cubrir tus carbohidratos solo con <strong>${alimento.nombre}</strong>, deberías comer unos <strong>${gramosNecesarios}g</strong> al día.</li>`;
         }
     });
+    htmlOpcionesComida += "</ul>";
+
+    let estructuraRutina = "";
+    if (sexo === 'masculino') {
+        estructuraRutina = `
+            <div style="margin-bottom: 12px;"><strong>🗓️ LUNES: Pecho, Hombro y Brazos</strong><br>• Press de Banca Plano — 4x10<br>• Press Militar con mancuernas — 3x12<br>• Curl de Bíceps con barra Z — 3x12</div>
+            <div style="margin-bottom: 12px;"><strong>🗓️ MARTES: Pierna Completa</strong><br>• Sentadillas Libres con barra — 4x8<br>• Prensa Inclinada a 45° — 3x12<br>• Curl Femoral acostado — 3x12</div>
+            <div style="margin-bottom: 12px;"><strong>🗓️ MIÉRCOLES: Espalda y Tríceps</strong><br>• Dominadas o Jalón al Pecho — 4x10<br>• Remo con barra T — 3x10<br>• Extensión en polea — 3x12</div>
+            <div style="margin-bottom: 12px;"><strong>🗓️ JUEVES: Pierna y Glúteos</strong><br>• Peso Muerto Convencional — 4x6<br>• Hip Thrust con barra — 4x10<br>• Zancadas caminando — 3x12</div>
+            <div style="margin-bottom: 12px;"><strong>🗓️ VIERNES: Enfoque Total</strong><br>• Press inclinado con mancuernas — 3x12<br>• Remo en polea baja — 3x12<br>• Curl martillo — 3x12</div>
+        `;
+    } else {
+        estructuraRutina = `
+            <div style="margin-bottom: 12px;"><strong>🗓️ LUNES: Glúteos y Femorales</strong><br>• Hip Thrust con barra pesada — 4x12<br>• Peso Muerto Rumano — 4x10<br>• Patada de Glúteo en polea — 3x12</div>
+            <div style="margin-bottom: 12px;"><strong>🗓️ MARTES: Cuádriceps y Pantorrilla</strong><br>• Sentadilla Goblet con mancuerna — 4x10<br>• Prensa inclinada — 3x12<br>• Elevación de talones — 4x20</div>
+            <div style="margin-bottom: 12px;"><strong>🗓️ MIÉRCOLES: Espalda y Brazos</strong><br>• Jalón al Pecho abierto — 3x12<br>• Remo con mancuerna — 3x10<br>• Extensión de Tríceps — 3x12</div>
+            <div style="margin-bottom: 12px;"><strong>🗓️ JUEVES: Pierna (Aislamiento)</strong><br>• Sentadillas Búlgaras — 3x10 por pierna<br>• Curl Femoral acostado — 4x12<br>• Prensa horizontal — 3x15</div>
+            <div style="margin-bottom: 12px;"><strong>🗓️ VIERNES: Glúteos y Pierna Completa</strong><br>• Sentadilla Libre profunda — 4x10<br>• Hip Thrust (pausa de 2s arriba) — 3x12<br>• Máquina de Abductores — 4x20</div>
+        `;
+    }
+
+    let contenidoFinalRutina = "";
+    if (esPremium) {
+        contenidoFinalRutina = `
+            <div style="background-color: #d4edda; color: #155724; padding: 12px; border-radius: 4px; margin-bottom: 15px; font-weight: bold;">[✓] MODO PREMIUM ACTIVO</div>
+            ${estructuraRutina}
+        `;
+    } else {
+        contenidoFinalRutina = `
+            ${estructuraRutina}
+            <div id="bloque-premium-web" class="ocultar-en-pdf" style="background: #f8d7da; border: 1px solid #f5c6cb; padding: 15px; border-radius: 6px; text-align: center; margin-top: 15px;">
+                <h4 style="color: #721c24; margin-top: 0;">🔒 ¿Quieres desbloquear los VIDEOS guiados?</h4>
+                <p style="color: #721c24; font-size: 13px;">Aprende la postura exacta mirando el video instruccional de los ejercicios diseñados para ti.</p>
+                <button onclick="simularPago()" style="background-color: #dc3545; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">Desbloquear Videos Guía por $9.99</button>
+            </div>
+        `;
+    }
+
+    document.getElementById('res-calorias').innerText = Math.round(caloriasObjetivo);
+    document.getElementById('res-carbos').innerText = carbohidratosGramos;
+    document.getElementById('res-proteinas').innerText = proteinaGramos;
+    document.getElementById('res-grasas').innerText = grasaGramos;
+    document.getElementById('res-comidas').innerHTML = htmlOpcionesComida;
+    document.getElementById('res-rutina').innerHTML = contenidoFinalRutina;
+
+    document.getElementById('resultados').style.display = 'block';
+}
+
+function simularPago() {
+    alert("Redirigiendo de forma segura a la plataforma de pago... 💳");
+}
+
+function descargarPlanPDF() {
+    // Lanza la interfaz nativa del navegador para Imprimir/Guardar PDF de forma inmediata
+    window.print();
 }
