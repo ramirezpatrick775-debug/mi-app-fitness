@@ -3,57 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generador de Rutina Fitness</title>
+    <title>GymApp Pro</title>
+    <!-- CSS integrado para que no se pierda el diseño -->
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background-color: #0f172a; color: white; display: flex; justify-content: center; padding: 20px; }
+        .container { background: #1e293b; padding: 25px; border-radius: 12px; width: 100%; max-width: 500px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        input, select, button { width: 100%; padding: 12px; margin: 8px 0; border-radius: 6px; border: none; box-sizing: border-box; }
+        button { background-color: #22c55e; color: white; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        button:hover { background-color: #16a34a; }
+        .resultado-box { background: white; color: #1e293b; padding: 15px; border-radius: 8px; margin-top: 20px; display: none; }
+        .dia-entrenamiento { background: #f1f5f9; padding: 10px; margin: 8px 0; border-left: 4px solid #22c55e; border-radius: 4px; font-size: 14px; }
+    </style>
 </head>
 <body>
 
-    <h2>Calculadora Fitness Personalizada</h2>
+<div class="container">
+    <h2 style="text-align: center;">⚡ GYMAPP PRO ⚡</h2>
+    <input type="number" id="peso" placeholder="Peso Corporal (kg)">
+    <input type="number" id="altura" placeholder="Altura (cm)">
+    <input type="number" id="edad" placeholder="Edad (Años)">
+    <select id="sexo"><option value="masculino">Masculino</option><option value="femenino">Femenino</option></select>
+    <select id="objetivo"><option value="deficit">Déficit (Perder Grasa)</option><option value="volumen">Volumen (Ganar Músculo)</option></select>
+    <select id="premium"><option value="no">Plan Gratuito</option><option value="si">Plan Premium</option></select>
     
-    <!-- Formulario de entrada -->
-    <div id="formulario">
-        <input type="number" id="peso" placeholder="Peso (kg)">
-        <input type="number" id="altura" placeholder="Altura (cm)">
-        <input type="number" id="edad" placeholder="Edad">
-        
-        <select id="sexo">
-            <option value="masculino">Masculino</option>
-            <option value="femenino">Femenino</option>
-        </select>
-        
-        <select id="objetivo">
-            <option value="deficit">Déficit (Perder Grasa)</option>
-            <option value="volumen">Volumen (Ganar Músculo)</option>
-        </select>
-        
-        <select id="premium">
-            <option value="no">Cuenta Gratis</option>
-            <option value="si">Cuenta Premium</option>
-        </select>
-        
-        <button onclick="procesarDatos()">CALCULAR PLAN DE ENTRENO</button>
-    </div>
+    <button onclick="procesarDatos()">CALCULAR PLAN DE ENTRENO</button>
 
-    <!-- Área de resultados (oculta por defecto) -->
-    <div id="resultados" style="display:none; margin-top: 20px;">
-        <h3>Tus Resultados:</h3>
-        <p>Calorías diarias: <span id="res-calorias"></span></p>
-        <p>Carbohidratos: <span id="res-carbos"></span>g | Proteínas: <span id="res-proteinas"></span>g | Grasas: <span id="res-grasas"></span>g</p>
-        
+    <div id="resultados" class="resultado-box">
+        <h3>Tu Plan Personalizado</h3>
+        <p>Calorías: <b id="res-calorias"></b> kcal</p>
+        <p>Carbos: <span id="res-carbos"></span>g | Proteínas: <span id="res-proteinas"></span>g</p>
         <div id="res-comidas"></div>
         <div id="res-rutina"></div>
-
-        <!-- Botón para descargar -->
-        <button onclick="descargarPlanPDF()" style="background-color: #22c55e; color: white; padding: 12px; border: none; border-radius: 6px; margin-top: 20px; cursor: pointer;">
-            📥 Descargar Plan en PDF
-        </button>
+        <button onclick="descargarPlanPDF()" style="background-color: #2563eb; margin-top: 15px;">📥 Descargar en PDF</button>
     </div>
+</div>
 
-    <!-- LIBRERÍAS Y SCRIPTS (El orden es fundamental aquí) -->
-    
-    <!-- 1. Cargamos la librería para generar el PDF -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-
-    <!-- 2. Cargamos tu lógica -->
-    <script src="app.js"></script>
+<!-- Librerías -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="app.js"></script>
 </body>
 </html>
