@@ -103,87 +103,88 @@ function simularPago() {
     alert("Redirigiendo de forma segura a la plataforma de pago... 💳");
 }
 
-// NUEVA FUNCIÓN OPTIMIZADA: FILTRA EXCLUSIVAMENTE LOS DÍAS DE LA RUTINA
+// NUEVA FUNCIÓN INMUNE A ERRORES: FONDO CLARO ESTÉTICO Y CERO ANUNCIOS
 function descargarPDF() {
     const kcal = document.getElementById('res-calorias').innerText;
     const carbos = document.getElementById('res-carbos').innerText;
     const proteinas = document.getElementById('res-proteinas').innerText;
     const grasas = document.getElementById('res-grasas').innerText;
     const comidas = document.getElementById('res-comidas').innerHTML;
+    const sexo = document.getElementById('sexo').value;
     
-    // Extracción limpia: Seleccionamos únicamente los divs que contienen los días de entrenamiento
-    const elementosDias = document.querySelectorAll('#res-rutina .dia-entrenamiento');
+    // Construimos la rutina del PDF de manera directa para evitar arrastrar la publicidad web
     let rutinaLimpiaPDF = "";
-    
-    if (elementosDias.length > 0) {
-        elementosDias.forEach(dia => {
-            rutinaLimpiaPDF += `<div style="margin-bottom: 15px; border-bottom: 1px solid #334155; padding-bottom: 10px;">${dia.innerHTML}</div>`;
-        });
+    if (sexo === 'masculino') {
+        rutinaLimpiaPDF = `
+            <div style="margin-bottom: 12px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;"><strong>🗓️ LUNES: Pecho, Hombro y Brazos</strong><br>• Press de Banca Plano — 4x10<br>• Press Militar con mancuernas — 3x12<br>• Curl de Bíceps con barra Z — 3x12</div>
+            <div style="margin-bottom: 12px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;"><strong>🗓️ MARTES: Pierna Completa</strong><br>• Sentadillas Libres con barra — 4x8<br>• Prensa Inclinada a 45° — 3x12<br>• Curl Femoral acostado — 3x12</div>
+            <div style="margin-bottom: 12px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;"><strong>🗓️ MIÉRCOLES: Espalda y Tríceps</strong><br>• Dominadas o Jalón al Pecho — 4x10<br>• Remo con barra T — 3x10<br>• Extensión en polea — 3x12</div>
+            <div style="margin-bottom: 12px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;"><strong>🗓️ JUEVES: Pierna y Glúteos</strong><br>• Peso Muerto Convencional — 4x6<br>• Hip Thrust con barra — 4x10<br>• Zancadas caminando — 3x12</div>
+            <div style="margin-bottom: 12px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;"><strong>🗓️ VIERNES: Enfoque Total</strong><br>• Press inclinado con mancuernas — 3x12<br>• Remo en polea baja — 3x12<br>• Curl martillo — 3x12</div>
+        `;
     } else {
-        // En caso de que el HTML original no use la clase, usamos el contenido ignorando el bloque premium
-        let clonRutina = document.getElementById('res-rutina').cloneNode(true);
-        const publicidades = clonRutina.querySelectorAll('div, p, button, h4');
-        publicidades.forEach(el => {
-            if (el.textContent.includes('desbloquear') || el.textContent.includes('Premium') || el.textContent.includes('$9.99')) {
-                el.remove();
-            }
-        });
-        rutinaLimpiaPDF = clonRutina.innerHTML;
+        rutinaLimpiaPDF = `
+            <div style="margin-bottom: 12px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;"><strong>🗓️ LUNES: Glúteos y Femorales</strong><br>• Hip Thrust con barra pesada — 4x12<br>• Peso Muerto Rumano — 4x10<br>• Patada de Glúteo en polea — 3x12</div>
+            <div style="margin-bottom: 12px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;"><strong>🗓️ MARTES: Cuádriceps y Pantorrilla</strong><br>• Sentadilla Goblet con mancuerna — 4x10<br>• Prensa inclinada — 3x12<br>• Elevación de talones — 4x20</div>
+            <div style="margin-bottom: 12px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;"><strong>🗓️ MIÉRCOLES: Espalda y Brazos</strong><br>• Jalón al Pecho abierto — 3x12<br>• Remo con mancuerna — 3x10<br>• Extensión de Tríceps — 3x12</div>
+            <div style="margin-bottom: 12px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;"><strong>🗓️ JUEVES: Pierna (Aislamiento)</strong><br>• Sentadillas Búlgaras — 3x10 por pierna<br>• Curl Femoral acostado — 4x12<br>• Prensa horizontal — 3x15</div>
+            <div style="margin-bottom: 12px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;"><strong>🗓️ VIERNES: Glúteos y Pierna Completa</strong><br>• Sentadilla Libre profunda — 4x10<br>• Hip Thrust (pausa de 2s arriba) — 3x12<br>• Máquina de Abductores — 4x20</div>
+        `;
     }
 
-    // Contenedor con diseño Cyberpunk / Gym Oscuro Premium
+    // Contenedor con diseño limpio deportivo (Fondo Blanco - Letras Oscuras)
     const plantillaPDF = document.createElement('div');
     plantillaPDF.style.padding = '30px';
-    plantillaPDF.style.fontFamily = "'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
-    plantillaPDF.style.color = '#f8fafc';
-    plantillaPDF.style.backgroundColor = '#0f172a';
+    plantillaPDF.style.fontFamily = "'Segoe UI', Roboto, Arial, sans-serif";
+    plantillaPDF.style.color = '#1e293b';
+    plantillaPDF.style.backgroundColor = '#ffffff';
 
     plantillaPDF.innerHTML = `
-        <div style="text-align: center; border-bottom: 2px solid #22c55e; padding-bottom: 15px; margin-bottom: 25px;">
-            <h1 style="margin: 0; color: #ffffff; font-size: 26px; letter-spacing: 1px;">🏋️‍♂️ GYMAPP WORKOUT PLAN 🏋️‍♂️</h1>
-            <p style="margin: 5px 0 0 0; color: #22c55e; font-size: 13px; font-weight: bold; text-transform: uppercase;">Evolución & Disciplina</p>
+        <div style="text-align: center; border-bottom: 3px solid #16a34a; padding-bottom: 12px; margin-bottom: 25px;">
+            <h1 style="margin: 0; color: #0f172a; font-size: 26px; letter-spacing: 1px;">🏋️‍♂️ MI PLAN FITNESS PRO 🏋️‍♂️</h1>
+            <p style="margin: 5px 0 0 0; color: #16a34a; font-size: 13px; font-weight: bold; text-transform: uppercase;">Disciplina, Enfoque y Resultados</p>
         </div>
 
-        <h2 style="color: #22c55e; font-size: 16px; text-transform: uppercase; border-left: 4px solid #22c55e; padding-left: 8px; margin-bottom: 15px;">📊 Macronutrientes y Objetivos</h2>
-        <table style="width: 100%; border-collapse: collapse; margin-bottom: 25px; background-color: #1e293b; border-radius: 8px; overflow: hidden; text-align: center;">
+        <h2 style="color: #16a34a; font-size: 16px; text-transform: uppercase; border-left: 4px solid #16a34a; padding-left: 8px; margin-bottom: 15px;">📊 Macronutrientes Diarios</h2>
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 25px; background-color: #f8fafc; border-radius: 6px; overflow: hidden; text-align: center; border: 1px solid #e2e8f0;">
             <thead>
-                <tr style="background-color: #1e293b; color: #94a3b8; font-size: 12px; text-transform: uppercase;">
-                    <th style="padding: 12px;">Calorías</th>
-                    <th style="padding: 12px;">Carbohidratos</th>
-                    <th style="padding: 12px;">Proteínas</th>
-                    <th style="padding: 12px;">Grasas</th>
+                <tr style="background-color: #0f172a; color: #ffffff; font-size: 12px; text-transform: uppercase;">
+                    <th style="padding: 10px;">Calorías totales</th>
+                    <th style="padding: 10px;">Carbohidratos</th>
+                    <th style="padding: 10px;">Proteínas</th>
+                    <th style="padding: 10px;">Grasas</th>
                 </tr>
             </thead>
             <tbody>
-                <tr style="font-weight: bold; font-size: 18px; color: #ffffff;">
-                    <td style="padding: 14px; border-top: 1px solid #334155; color: #38bdf8;">${kcal} kcal</td>
-                    <td style="padding: 14px; border-top: 1px solid #334155; color: #22c55e;">${carbos}g</td>
-                    <td style="padding: 14px; border-top: 1px solid #334155; color: #22c55e;">${proteinas}g</td>
-                    <td style="padding: 14px; border-top: 1px solid #334155; color: #22c55e;">${grasas}g</td>
+                <tr style="font-weight: bold; font-size: 16px;">
+                    <td style="padding: 12px; border-top: 1px solid #e2e8f0; color: #2563eb;">${kcal} kcal</td>
+                    <td style="padding: 12px; border-top: 1px solid #e2e8f0; color: #16a34a;">${carbos}g</td>
+                    <td style="padding: 12px; border-top: 1px solid #e2e8f0; color: #16a34a;">${proteinas}g</td>
+                    <td style="padding: 12px; border-top: 1px solid #e2e8f0; color: #16a34a;">${grasas}g</td>
                 </tr>
             </tbody>
         </table>
 
-        <h2 style="color: #22c55e; font-size: 16px; text-transform: uppercase; border-left: 4px solid #22c55e; padding-left: 8px; margin-bottom: 15px;">🛒 Distribución de Alimentos</h2>
-        <div style="background-color: #1e293b; padding: 18px; border-radius: 8px; font-size: 13px; line-height: 1.6; color: #cbd5e1; margin-bottom: 25px; border: 1px solid #334155;">
+        <h2 style="color: #16a34a; font-size: 16px; text-transform: uppercase; border-left: 4px solid #16a34a; padding-left: 8px; margin-bottom: 15px;">🛒 Guía de Alimentación</h2>
+        <div style="background-color: #f8fafc; padding: 15px; border-radius: 6px; font-size: 13px; line-height: 1.6; color: #334155; margin-bottom: 25px; border: 1px solid #e2e8f0;">
             ${comidas}
         </div>
 
-        <h2 style="color: #22c55e; font-size: 16px; text-transform: uppercase; border-left: 4px solid #22c55e; padding-left: 8px; margin-bottom: 15px;">💪 Plan de Entrenamiento Semanal</h2>
-        <div style="background-color: #1e293b; padding: 18px; border-radius: 8px; font-size: 13px; line-height: 1.6; color: #cbd5e1; border: 1px solid #334155;">
+        <h2 style="color: #16a34a; font-size: 16px; text-transform: uppercase; border-left: 4px solid #16a34a; padding-left: 8px; margin-bottom: 15px;">💪 Rutina de Entrenamiento Semanal</h2>
+        <div style="background-color: #f8fafc; padding: 15px; border-radius: 6px; font-size: 13px; line-height: 1.6; color: #334155; border: 1px solid #e2e8f0;">
             ${rutinaLimpiaPDF}
         </div>
 
-        <div style="text-align: center; margin-top: 35px; color: #64748b; font-size: 11px; letter-spacing: 0.5px;">
-            Generado por GymApp Pro • No hay excusas.
+        <div style="text-align: center; margin-top: 30px; color: #94a3b8; font-size: 11px;">
+            Plan generado de forma personalizada • ¡A darle con todo!
         </div>
     `;
 
     const opciones = {
-        margin:       [10, 10, 10, 10],
+        margin:       [12, 12, 12, 12],
         filename:     'Mi_Plan_Fitness_GymApp.pdf',
         image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2, backgroundColor: '#0f172a', useCORS: true },
+        html2canvas:  { scale: 2, backgroundColor: '#ffffff', useCORS: true },
         jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
 
