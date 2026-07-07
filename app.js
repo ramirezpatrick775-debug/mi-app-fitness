@@ -53,27 +53,26 @@ function generarPlan() {
 
 function descargarPlanPDF() {
     const element = document.querySelector('.container');
+    const botonDescarga = document.querySelector('button[onclick="descargarPlanPDF()"]');
     
-    // Verificamos que los datos existan antes de generar
-    if (document.getElementById('r-rutina').innerHTML === "") {
-        alert("Primero debes generar el plan.");
-        return;
-    }
+    // 1. Ocultamos el botón visualmente para que no salga en la captura
+    botonDescarga.style.display = 'none';
 
     const opt = {
-        margin: 5,
+        margin: [5, 5, 5, 5],
         filename: 'Mi_Plan_Gym_Pro.pdf',
         image: { type: 'jpeg', quality: 1 },
         html2canvas: { 
             scale: 2, 
-            useCORS: true, 
-            logging: false 
+            logging: false, 
+            windowWidth: document.body.scrollWidth 
         },
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
 
-    // Usamos un pequeño retraso para asegurar que el navegador haya renderizado el HTML
-    setTimeout(() => {
-        html2pdf().set(opt).from(element).save();
-    }, 500); 
+    // 2. Generamos el PDF
+    html2pdf().set(opt).from(element).save().then(() => {
+        // 3. Volvemos a mostrar el botón después de generar
+        botonDescarga.style.display = 'block';
+    });
 }
