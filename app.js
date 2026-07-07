@@ -1,48 +1,45 @@
-// Base de datos de alimentos ampliada y más variada
-const baseDeDatosAlimentos = [
-    { nombre: "Arroz blanco cocido", carbohidratosPor100g: 28, proteinasPor100g: 2.7, grasasPor100g: 0.3, caloriasPor100g: 130 },
-    { nombre: "Avena en hojuelas", carbohidratosPor100g: 66, proteinasPor100g: 16.9, grasasPor100g: 6.9, caloriasPor100g: 389 },
-    { nombre: "Papa/Patata hervida", carbohidratosPor100g: 17, proteinasPor100g: 2, grasasPor100g: 0.1, caloriasPor100g: 77 },
-    { nombre: "Banana/Plátano", carbohidratosPor100g: 23, proteinasPor100g: 1.1, grasasPor100g: 0.3, caloriasPor100g: 89 },
-    { nombre: "Pechuga de pollo (plancha)", carbohidratosPor100g: 0, proteinasPor100g: 31, grasasPor100g: 3.6, caloriasPor100g: 165 },
-    { nombre: "Carne vacuna magra", carbohidratosPor100g: 0, proteinasPor100g: 26, grasasPor100g: 10, caloriasPor100g: 200 },
-    { nombre: "Filete de Merluza o Pescado blanco", carbohidratosPor100g: 0, proteinasPor100g: 18, grasasPor100g: 2, caloriasPor100g: 90 },
-    { nombre: "Huevo entero (por unidad)", carbohidratosPor100g: 0.7, proteinasPor100g: 6.3, grasasPor100g: 5, caloriasPor100g: 78 }
-];
-
-function procesarDatos() {
+function generarPlan() {
     const peso = parseFloat(document.getElementById('peso').value);
-    const altura = parseFloat(document.getElementById('altura').value);
-    const edad = parseInt(document.getElementById('edad').value);
     const sexo = document.getElementById('sexo').value;
-    const objetivo = document.getElementById('objetivo').value;
+    const nivel = document.getElementById('nivel').value;
+    const obj = document.getElementById('objetivo').value;
 
-    if (!peso || !altura || !edad) { alert("Completa todos los campos"); return; }
+    if (!peso) return alert("Por favor, ingresa tu peso");
 
-    // Cálculos simples
-    const geb = (sexo === 'masculino') ? (10*peso + 6.25*altura - 5*edad + 5) : (10*peso + 6.25*altura - 5*edad - 161);
-    const cal = (objetivo === 'deficit') ? geb * 1.2 : geb * 1.6;
+    // 1. Cálculo de Calorías
+    const cal = obj === 'volumen' ? (peso * 35) + 400 : (peso * 28) - 400;
+    document.getElementById('r-cal').innerText = Math.round(cal) + " kcal";
+
+    // 2. Lógica de Rutinas Adaptativas
+    let rutinaHTML = "<h4>📅 Tu Rutina Personalizada:</h4>";
     
-    document.getElementById('res-calorias').innerText = Math.round(cal);
-    document.getElementById('res-carbos').innerText = Math.round((cal * 0.5) / 4);
-    document.getElementById('res-proteinas').innerText = Math.round(peso * 2);
-    
-    document.getElementById('res-rutina').innerHTML = `
-        <div class="dia-entrenamiento"><strong>LUNES:</strong> Pecho y Tríceps - Press Banca 4x10, Fondos 3x12</div>
-        <div class="dia-entrenamiento"><strong>MARTES:</strong> Pierna Completa - Sentadilla 4x8, Prensa 3x12</div>
-        <div class="dia-entrenamiento"><strong>MIÉRCOLES:</strong> Espalda y Bíceps - Dominadas 4x10, Curl Barra 3x12</div>
-    `;
-    document.getElementById('resultados').style.display = 'block';
-}
+    if (sexo === 'masculino') {
+        if (nivel === 'principiante') {
+            rutinaHTML += "<div class='day'>Full Body: Press Banca 3x10, Sentadilla 3x10, Remo 3x10 (Enfoque en técnica)</div>";
+        } else if (nivel === 'intermedio') {
+            rutinaHTML += "<div class='day'>Push: Press Banca 4x10, Press Inclinado 3x10, Press Militar 3x10</div>";
+            rutinaHTML += "<div class='day'>Pull: Dominadas 4x8, Remo con barra 4x10, Curl Bíceps 3x12</div>";
+        } else { // Avanzado
+            rutinaHTML += "<div class='day'>Push (Avanzado): Press Banca 4x8 + Drop-set final, Press Inclinado 3x10 + Drop-set</div>";
+            rutinaHTML += "<div class='day'>Pull (Avanzado): Peso Muerto 4x6, Remo Pendlay 4x8 + Drop-set, Dominadas lastradas 3x8</div>";
+        }
+    } else { // Femenino
+        if (nivel === 'principiante') {
+            rutinaHTML += "<div class='day'>Glúteo: Puente Glúteo 3x15, Sentadilla libre 3x12, Patada glúteo 3x12</div>";
+        } else if (nivel === 'intermedio') {
+            rutinaHTML += "<div class='day'>Enfoque Glúteo: Hip Thrust 4x10, Peso Muerto Rumano 4x10, Prensa 3x12</div>";
+        } else { // Avanzado
+            rutinaHTML += "<div class='day'>Glúteo Pro: Hip Thrust 4x8 (Pausa 2s) + Drop-set final, Sentadilla Búlgara 3x10 + Drop-set, Abductores 4x20</div>";
+        }
+    }
 
-function descargarPlanPDF() {
-    const element = document.getElementById('resultados');
-    const opt = {
-        margin:       10,
-        filename:     'MiPlanFitness.pdf',
-        image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2 },
-        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    };
-    html2pdf().set(opt).from(element).save();
+    // 3. Guía Nutricional
+    let proteina = Math.round(peso * 2.2);
+    let dieta = obj === 'volumen' ? "Superávit: Prioriza carbohidratos (avena, arroz) y proteína en cada comida." : "Déficit: Prioriza proteína alta, vegetales verdes y grasas saludables.";
+    
+    document.getElementById('r-rutina').innerHTML = rutinaHTML;
+    document.getElementById('r-dieta').innerHTML = `<h4>🥗 Nutrición:</h4><p>Proteína meta: <b>${proteina}g</b>. ${dieta}</p>`;
+    
+    document.getElementById('res').style.display = 'block';
+    document.getElementById('res').scrollIntoView({ behavior: 'smooth' });
 }
