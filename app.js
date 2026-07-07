@@ -6,38 +6,51 @@ function generarPlan() {
 
     if (!peso) return alert("Por favor, ingresa tu peso");
 
-    // 1. Cálculos de Nutrición
+    // Cálculos
     const cal = obj === 'volumen' ? (peso * 35) + 400 : (peso * 28) - 400;
     const proteina = Math.round(peso * 2.2);
-    
     document.getElementById('r-cal').innerText = Math.round(cal) + " kcal";
 
-    // 2. Rutina Semanal (Adaptada por nivel y sexo)
-    let rutinas = {
-        masculino: {
-            principiante: "Lunes: FullBody (3x10), Miércoles: FullBody (3x10), Viernes: FullBody (3x10). Enfoque: Técnica básica.",
-            intermedio: "Lunes: Empuje (4x10), Martes: Tracción (4x10), Jueves: Pierna (4x10), Viernes: Torso/Brazo (3x12).",
-            avanzado: "Lunes: Pecho/Hombro (Drop-sets), Martes: Espalda/Bíceps (Drop-sets), Jueves: Pierna (Alta carga), Viernes: Full Body (Alta intensidad)."
-        },
-        femenino: {
-            principiante: "Lunes: Glúteo/Pierna (3x12), Miércoles: Tren Superior (3x12), Viernes: Glúteo/Core (3x12).",
-            intermedio: "Lunes: Glúteo (4x10), Martes: Espalda/Hombro (3x12), Jueves: Pierna completa (4x10), Sábado: Glúteo/Abdomen (4x15).",
-            avanzado: "Lunes: Glúteo Pro (Drop-sets), Martes: Espalda/Brazos (4x12), Jueves: Cuádriceps/Femoral (Drop-sets), Viernes: Glúteo/Core (Alta intensidad)."
-        }
-    };
+    // Formato de ejercicios (Añade Drop-set para nivel avanzado)
+    const series = (ejercicio) => (nivel === 'avanzado') ? `${ejercicio} (4x12-15 + Drop-set)` : `${ejercicio} (3x12-15)`;
 
-    // 3. Dieta Semanal Estructurada
-    let estructuraDieta = `
+    let rutinaHTML = "<h4>📅 Rutina Semanal (12-15 Repeticiones):</h4>";
+
+    if (sexo === 'masculino') {
+        rutinaHTML += `
+            <div class='day'><b>Lunes (Pecho/Bi/Tri/Hom):</b> ${series("Press Banca")}, ${series("Press Inclinado")}, ${series("Aperturas")}, ${series("Curl Barra")}, ${series("Curl Martillo")}, ${series("Ext. Polea")}, ${series("Copa Tríceps")}, ${series("Press Militar")}, ${series("Elev. Laterales")}, ${series("Elev. Frontales")}</div>
+            <div class='day'><b>Martes (Pierna):</b> ${series("Sentadilla")}, ${series("Prensa")}, ${series("Peso Muerto Rumano")}, ${series("Curl Femoral")}, ${series("Elev. Talones")}, ${series("Gemelo sentado")}, ${series("Hip Thrust")}, ${series("Patada Glúteo")}</div>
+            <div class='day'><b>Miércoles (Espalda/Bi/Tri/Trap):</b> ${series("Dominadas")}, ${series("Remo Barra")}, ${series("Jalón Pecho")}, ${series("Curl Scott")}, ${series("Curl Polea")}, ${series("Press Francés")}, ${series("Ext. Polea")}, ${series("Encogimientos Barra")}, ${series("Encogimientos Manc.")}</div>
+            <div class='day'><b>Jueves (Pierna Completa):</b> ${series("Sentadilla")} (x2), ${series("Prensa")} (x2), ${series("Curl Femoral")} (x2), ${series("Ext. Cuádriceps")} (x2)</div>
+            <div class='day'><b>Viernes (Pecho/Espalda/Bi/Tri/Ante):</b> ${series("Press Plano")}, ${series("Press Inclinado")}, ${series("Cruces polea")}, ${series("Remo Manc.")}, ${series("Remo Gironda")}, ${series("Curl Barra")}, ${series("Curl Invertido")}, ${series("Press Francés")}, ${series("Tríceps Polea")}, ${series("Flexión Muñeca")} (x2)</div>
+        `;
+    } else {
+        rutinaHTML += `
+            <div class='day'><b>Lunes (Glúteo/Femoral):</b> ${series("Hip Thrust")}, ${series("Puente Glúteo")}, ${series("Patada Polea")}, ${series("Peso Muerto Rumano")}, ${series("Curl Femoral")}, ${series("Curl Femoral sentado")}</div>
+            <div class='day'><b>Martes (Cuádriceps/Aductor):</b> ${series("Sentadilla Goblet")}, ${series("Prensa")}, ${series("Zancadas")}, ${series("Aductor Máquina")} (x3)</div>
+            <div class='day'><b>Miércoles (Espalda/Tríceps/Bíceps):</b> ${series("Jalón al pecho")}, ${series("Remo Polea")}, ${series("Remo Manc.")}, ${series("Ext. Polea")}, ${series("Copa Tríceps")}, ${series("Press Francés")}, ${series("Curl Barra")}, ${series("Curl Martillo")}, ${series("Curl Scott")}</div>
+            <div class='day'><b>Jueves (Glúteo/Femoral/Pantorrilla):</b> ${series("Hip Thrust")}, ${series("Sentadilla Búlgara")}, ${series("Glúteo en polea")}, ${series("Peso Muerto Rumano")}, ${series("Curl Femoral")}, ${series("Curl Femoral sentado")}, ${series("Elev. Talones")}</div>
+            <div class='day'><b>Viernes (Pecho/Bíceps/Tríceps/Hombro):</b> ${series("Press Manc.")}, ${series("Aperturas")}, ${series("Flexiones")}, ${series("Curl Barra")}, ${series("Curl Martillo")}, ${series("Ext. Polea")}, ${series("Copa Tríceps")}, ${series("Press Militar")}, ${series("Elev. Laterales")}, ${series("Elev. Frontales")}</div>
+        `;
+    }
+
+    // Dieta
+    const dietaHTML = `
+        <h4>🥗 Plan de Alimentación Diario:</h4>
         <div class='day'><b>Desayuno:</b> 3 claras + 1 huevo entero + 50g avena.</div>
         <div class='day'><b>Media Mañana:</b> 1 fruta + 15 almendras.</div>
         <div class='day'><b>Almuerzo:</b> 150g proteína (pollo/pescado) + 100g carbohidrato (arroz/papa) + vegetales verdes.</div>
         <div class='day'><b>Merienda:</b> Proteína en polvo o yogurt griego.</div>
         <div class='day'><b>Cena:</b> 150g proteína (pescado/carne magra) + vegetales al vapor.</div>
+        <p>Proteína meta diaria: <b>${proteina}g</b>.</p>
     `;
 
-    document.getElementById('r-rutina').innerHTML = `<h4>📅 Rutina Semanal:</h4><div class='day'>${rutinas[sexo][nivel]}</div>`;
-    document.getElementById('r-dieta').innerHTML = `<h4>🥗 Plan de Comidas Diario:</h4>${estructuraDieta}<p>Proteína meta diaria: <b>${proteina}g</b>.</p>`;
-    
+    document.getElementById('r-rutina').innerHTML = rutinaHTML;
+    document.getElementById('r-dieta').innerHTML = dietaHTML;
     document.getElementById('res').style.display = 'block';
     document.getElementById('res').scrollIntoView({ behavior: 'smooth' });
+}
+
+function descargarPlanPDF() {
+    html2pdf().from(document.querySelector('.container')).save('Mi_Plan_Gym_Pro.pdf');
 }
