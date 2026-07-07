@@ -6,39 +6,37 @@ function generarPlan() {
 
     if (!peso) return alert("Por favor, ingresa tu peso");
 
-    // 1. Cálculo de Calorías
+    // 1. Cálculos de Nutrición
     const cal = obj === 'volumen' ? (peso * 35) + 400 : (peso * 28) - 400;
+    const proteina = Math.round(peso * 2.2);
+    
     document.getElementById('r-cal').innerText = Math.round(cal) + " kcal";
 
-    // 2. Lógica de Rutinas Adaptativas
-    let rutinaHTML = "<h4>📅 Tu Rutina Personalizada:</h4>";
-    
-    if (sexo === 'masculino') {
-        if (nivel === 'principiante') {
-            rutinaHTML += "<div class='day'>Full Body: Press Banca 3x10, Sentadilla 3x10, Remo 3x10 (Enfoque en técnica)</div>";
-        } else if (nivel === 'intermedio') {
-            rutinaHTML += "<div class='day'>Push: Press Banca 4x10, Press Inclinado 3x10, Press Militar 3x10</div>";
-            rutinaHTML += "<div class='day'>Pull: Dominadas 4x8, Remo con barra 4x10, Curl Bíceps 3x12</div>";
-        } else { // Avanzado
-            rutinaHTML += "<div class='day'>Push (Avanzado): Press Banca 4x8 + Drop-set final, Press Inclinado 3x10 + Drop-set</div>";
-            rutinaHTML += "<div class='day'>Pull (Avanzado): Peso Muerto 4x6, Remo Pendlay 4x8 + Drop-set, Dominadas lastradas 3x8</div>";
+    // 2. Rutina Semanal (Adaptada por nivel y sexo)
+    let rutinas = {
+        masculino: {
+            principiante: "Lunes: FullBody (3x10), Miércoles: FullBody (3x10), Viernes: FullBody (3x10). Enfoque: Técnica básica.",
+            intermedio: "Lunes: Empuje (4x10), Martes: Tracción (4x10), Jueves: Pierna (4x10), Viernes: Torso/Brazo (3x12).",
+            avanzado: "Lunes: Pecho/Hombro (Drop-sets), Martes: Espalda/Bíceps (Drop-sets), Jueves: Pierna (Alta carga), Viernes: Full Body (Alta intensidad)."
+        },
+        femenino: {
+            principiante: "Lunes: Glúteo/Pierna (3x12), Miércoles: Tren Superior (3x12), Viernes: Glúteo/Core (3x12).",
+            intermedio: "Lunes: Glúteo (4x10), Martes: Espalda/Hombro (3x12), Jueves: Pierna completa (4x10), Sábado: Glúteo/Abdomen (4x15).",
+            avanzado: "Lunes: Glúteo Pro (Drop-sets), Martes: Espalda/Brazos (4x12), Jueves: Cuádriceps/Femoral (Drop-sets), Viernes: Glúteo/Core (Alta intensidad)."
         }
-    } else { // Femenino
-        if (nivel === 'principiante') {
-            rutinaHTML += "<div class='day'>Glúteo: Puente Glúteo 3x15, Sentadilla libre 3x12, Patada glúteo 3x12</div>";
-        } else if (nivel === 'intermedio') {
-            rutinaHTML += "<div class='day'>Enfoque Glúteo: Hip Thrust 4x10, Peso Muerto Rumano 4x10, Prensa 3x12</div>";
-        } else { // Avanzado
-            rutinaHTML += "<div class='day'>Glúteo Pro: Hip Thrust 4x8 (Pausa 2s) + Drop-set final, Sentadilla Búlgara 3x10 + Drop-set, Abductores 4x20</div>";
-        }
-    }
+    };
 
-    // 3. Guía Nutricional
-    let proteina = Math.round(peso * 2.2);
-    let dieta = obj === 'volumen' ? "Superávit: Prioriza carbohidratos (avena, arroz) y proteína en cada comida." : "Déficit: Prioriza proteína alta, vegetales verdes y grasas saludables.";
-    
-    document.getElementById('r-rutina').innerHTML = rutinaHTML;
-    document.getElementById('r-dieta').innerHTML = `<h4>🥗 Nutrición:</h4><p>Proteína meta: <b>${proteina}g</b>. ${dieta}</p>`;
+    // 3. Dieta Semanal Estructurada
+    let estructuraDieta = `
+        <div class='day'><b>Desayuno:</b> 3 claras + 1 huevo entero + 50g avena.</div>
+        <div class='day'><b>Media Mañana:</b> 1 fruta + 15 almendras.</div>
+        <div class='day'><b>Almuerzo:</b> 150g proteína (pollo/pescado) + 100g carbohidrato (arroz/papa) + vegetales verdes.</div>
+        <div class='day'><b>Merienda:</b> Proteína en polvo o yogurt griego.</div>
+        <div class='day'><b>Cena:</b> 150g proteína (pescado/carne magra) + vegetales al vapor.</div>
+    `;
+
+    document.getElementById('r-rutina').innerHTML = `<h4>📅 Rutina Semanal:</h4><div class='day'>${rutinas[sexo][nivel]}</div>`;
+    document.getElementById('r-dieta').innerHTML = `<h4>🥗 Plan de Comidas Diario:</h4>${estructuraDieta}<p>Proteína meta diaria: <b>${proteina}g</b>.</p>`;
     
     document.getElementById('res').style.display = 'block';
     document.getElementById('res').scrollIntoView({ behavior: 'smooth' });
