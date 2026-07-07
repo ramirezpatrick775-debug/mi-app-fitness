@@ -28,13 +28,18 @@
         
         <button onclick="generarPlan()">GENERAR MI PLAN PRO</button>
 
-        <div id="res" class="res-box">
-            <h3>Tu Estrategia Fitness</h3>
-            <p>🔥 <b>Calorías Meta:</b> <span id="r-cal"></span></p>
-            <div id="r-rutina"></div>
-            <div id="r-dieta"></div>
-            <button onclick="descargarPlanPDF()" style="background:#2563eb; color:white;">📥 Descargar PDF</button>
-        </div>
+   <div id="res" class="res-box">
+    <h3>Tu Estrategia Fitness</h3>
+    <p>🔥 <b>Calorías Meta:</b> <span id="r-cal"></span></p>
+    
+    <!-- Estos divs son obligatorios para que el JS funcione -->
+    <div id="r-rutina"></div>
+    <div id="r-dieta"></div>
+    
+    <button onclick="descargarPlanPDF()" style="background:#2563eb; color:white; margin-top:20px;">
+        📥 Descargar en PDF
+    </button>
+</div>
     </div>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="app.js"></script>
