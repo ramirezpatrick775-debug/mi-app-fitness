@@ -52,5 +52,28 @@ function generarPlan() {
 }
 
 function descargarPlanPDF() {
-    html2pdf().from(document.querySelector('.container')).save('Mi_Plan_Gym_Pro.pdf');
+    const element = document.querySelector('.container');
+    
+    // Verificamos que los datos existan antes de generar
+    if (document.getElementById('r-rutina').innerHTML === "") {
+        alert("Primero debes generar el plan.");
+        return;
+    }
+
+    const opt = {
+        margin: 5,
+        filename: 'Mi_Plan_Gym_Pro.pdf',
+        image: { type: 'jpeg', quality: 1 },
+        html2canvas: { 
+            scale: 2, 
+            useCORS: true, 
+            logging: false 
+        },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+
+    // Usamos un pequeño retraso para asegurar que el navegador haya renderizado el HTML
+    setTimeout(() => {
+        html2pdf().set(opt).from(element).save();
+    }, 500); 
 }
